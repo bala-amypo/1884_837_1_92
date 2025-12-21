@@ -25,12 +25,10 @@ public class User {
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
-
-        if (this.role == null || this.role.trim().isEmpty()) {
+        if (this.role == null) {
             this.role = "ANALYST";
         }
     }
-
 
     public User() {}
 
@@ -40,6 +38,7 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
 
     public Long getId() { return id; }
     public String getName() { return name; }
