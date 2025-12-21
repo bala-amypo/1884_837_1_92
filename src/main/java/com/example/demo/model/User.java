@@ -26,10 +26,11 @@ public class User {
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
 
-        if (this.role == null || this.role.isBlank()) {
+        if (this.role == null || this.role.trim().isEmpty()) {
             this.role = "ANALYST";
         }
     }
+
 
     public User() {}
 
