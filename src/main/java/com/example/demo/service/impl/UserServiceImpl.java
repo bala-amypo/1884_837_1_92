@@ -12,17 +12,16 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder;
 
-    public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder encoder) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.encoder = encoder;
+        this.encoder = new BCryptPasswordEncoder();
     }
 
     @Override
     public User register(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
@@ -32,6 +31,4 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-}
+                .orElseThrow(() -> new
