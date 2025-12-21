@@ -7,6 +7,8 @@ import com.example.demo.util.CoordinateValidator;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class HotspotZoneServiceImpl implements HotspotZoneService {
 
@@ -19,7 +21,7 @@ public class HotspotZoneServiceImpl implements HotspotZoneService {
     @Override
     public HotspotZone addZone(HotspotZone zone) {
 
-        if (repository.findByZoneName(zone.getZoneName()).isPresent()) {
+        if (repository.existsByZoneName(zone.getZoneName())) {
             throw new RuntimeException("Zone already exists");
         }
 
@@ -33,7 +35,7 @@ public class HotspotZoneServiceImpl implements HotspotZoneService {
     }
 
     @Override
-    public java.util.List<HotspotZone> getAllZones() {
+    public List<HotspotZone> getAllZones() {
         return repository.findAll();
     }
 }
