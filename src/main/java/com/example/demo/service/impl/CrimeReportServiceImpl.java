@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.CrimeReport;
+import com.example.demo.model.CrimeReport;
 import com.example.demo.repository.CrimeReportRepository;
 import com.example.demo.service.CrimeReportService;
 import com.example.demo.util.CoordinateValidator;
@@ -13,19 +13,28 @@ import java.util.List;
 @Service
 public class CrimeReportServiceImpl implements CrimeReportService {
 
-    private final CrimeReportRepository repo;
+    private final CrimeReportRepository repository;
 
-    public CrimeReportServiceImpl(CrimeReportRepository repo) {
-        this.repo = repo;
+    public CrimeReportServiceImpl(CrimeReportRepository repository) {
+        this.repository = repository;
     }
 
-    public CrimeReport addReport(CrimeReport r) {
-        if (r.getLatitude() > 90 || r.getLatitude() < -90)
-            throw new RuntimeException("Invalid latitude");
-        return repo.save(r);
+    @Override
+    public CrimeReport addReport(CrimeReport report) {
+
+        if (!CoordinateValidator.isValid(report.getLatitude(), report.getLongitude())) {
+            throw new RuntimeException("Invalid latitude or longitude");
+        }
+
+        if (!DateValidator.isPastOrPresent(report.getOccurredAt())) {
+            throw new RuntimeException("Invalid date");
+        }
+
+        return repository.save(report);
     }
 
+    @Override
     public List<CrimeReport> getAllReports() {
-        return repo.findAll();
+        return repository.findAll();
     }
 }
