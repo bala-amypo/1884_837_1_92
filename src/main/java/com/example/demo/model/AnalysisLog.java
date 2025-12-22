@@ -1,34 +1,19 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter @Setter
 public class AnalysisLog {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String message;
-    private LocalDateTime loggedAt;
+    private LocalDateTime loggedAt = LocalDateTime.now();
 
     @ManyToOne
     private HotspotZone zone;
-
-    @PrePersist
-    public void onLog() {
-        this.loggedAt = LocalDateTime.now();
-    }
-
-    public AnalysisLog() {}
-
-    public Long getId() { return id; }
-    public String getMessage() { return message; }
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public HotspotZone getZone() { return zone; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setMessage(String message) { this.message = message; }
-    public void setZone(HotspotZone zone) { this.zone = zone; }
 }

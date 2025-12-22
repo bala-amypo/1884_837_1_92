@@ -12,30 +12,23 @@ import java.util.List;
 @Service
 public class HotspotZoneServiceImpl implements HotspotZoneService {
 
-    private final HotspotZoneRepository repository;
+    private final HotspotZoneRepository repo;
 
-    public HotspotZoneServiceImpl(HotspotZoneRepository repository) {
-        this.repository = repository;
+    public HotspotZoneServiceImpl(HotspotZoneRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public HotspotZone addZone(HotspotZone zone) {
+    public HotspotZone addZone(HotspotZone z) {
+        if (repo.existsByZoneName(z.getZoneName()))
+            throw new RuntimeException("Zone exists");
 
-        if (repository.existsByZoneName(zone.getZoneName())) {
-            throw new RuntimeException("Zone already exists");
-        }
-
-        if (!CoordinateValidator.isValid(
-                zone.getCenterLat(), zone.getCenterLong())) {
+        if (z.getCenterLat() > 90 || z.getCenterLong() > 180)
             throw new RuntimeException("Invalid latitude or longitude");
-        }
 
-        zone.setSeverityLevel("LOW");
-        return repository.save(zone);
+        return repo.save(z);
     }
 
-    @Override
     public List<HotspotZone> getAllZones() {
-        return repository.findAll();
+        return repo.findAll();
     }
 }

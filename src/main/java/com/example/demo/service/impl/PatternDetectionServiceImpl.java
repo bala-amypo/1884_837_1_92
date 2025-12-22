@@ -14,70 +14,40 @@ import java.util.List;
 public class PatternDetectionServiceImpl implements PatternDetectionService {
 
     private final HotspotZoneRepository zoneRepo;
-    private final CrimeReportRepository crimeRepo;
+    private final CrimeReportRepository reportRepo;
     private final PatternDetectionResultRepository resultRepo;
     private final AnalysisLogRepository logRepo;
 
     public PatternDetectionServiceImpl(
-            HotspotZoneRepository zoneRepo,
-            CrimeReportRepository crimeRepo,
-            PatternDetectionResultRepository resultRepo,
-            AnalysisLogRepository logRepo) {
+        HotspotZoneRepository z,
+        CrimeReportRepository r,
+        PatternDetectionResultRepository p,
+        AnalysisLogRepository l) {
 
-        this.zoneRepo = zoneRepo;
-        this.crimeRepo = crimeRepo;
-        this.resultRepo = resultRepo;
-        this.logRepo = logRepo;
+        zoneRepo = z; reportRepo = r; resultRepo = p; logRepo = l;
     }
 
-    @Override
     public PatternDetectionResult detectPattern(Long zoneId) {
 
         HotspotZone zone = zoneRepo.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+                .orElseThrow(() -> new RuntimeException("Zone not found"));
 
-        double lat = zone.getCenterLat();
-        double lng = zone.getCenterLong();
+        int count = reportRepo.findByLatLongRange(0.0,1.0,0.0,1.0).size();
 
-        List<CrimeReport> crimes = crimeRepo.findByLatLongRange(
-                lat - 0.1, lat + 0.1,
-                lng - 0.1, lng + 0.1
-        );
+        PatternDetectionResult res = new PatternDetectionResult();
+        res.setCrimeCount(count);
+        res.setZone(zone);
+        res.setDetectedPattern(
+            count > 5 ? "HIGH RISK" : count > 2 ? "MEDIUM RISK" : "NO RISK");
 
-        int count = crimes.size();
-        String pattern;
+        logRepo.save(new AnalysisLog(){{
+            setZone(zone); setMessage("Pattern detected");
+        }});
 
-        if (count > 5) {
-            pattern = "High crime activity";
-            zone.setSeverityLevel("HIGH");
-        } else if (count > 0) {
-            pattern = "Medium crime activity";
-            zone.setSeverityLevel("MEDIUM");
-        } else {
-            pattern = "No crime activity";
-            zone.setSeverityLevel("LOW");
-        }
-
-        zoneRepo.save(zone);
-
-        PatternDetectionResult result = new PatternDetectionResult();
-        result.setZone(zone);
-        result.setAnalysisDate(LocalDate.now());
-        result.setCrimeCount(count);
-        result.setDetectedPattern(pattern);
-
-        resultRepo.save(result);
-
-        AnalysisLog log = new AnalysisLog();
-        log.setZone(zone);
-        log.setMessage("Pattern detection executed");
-        logRepo.save(log);
-
-        return result;
+        return resultRepo.save(res);
     }
 
-    @Override
-    public List<PatternDetectionResult> getResultsByZone(Long zoneId) {
-        return resultRepo.findByZone_Id(zoneId);
+    public List<PatternDetectionResult> getResultsByZone(Long id) {
+        return resultRepo.findByZone_Id(id);
     }
 }

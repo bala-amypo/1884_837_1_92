@@ -1,16 +1,11 @@
 package com.example.demo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.model.HotspotZone;
-
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import com.example.demo.entity.*;
 
 public interface HotspotZoneRepository extends JpaRepository<HotspotZone, Long> {
-
-    Optional<HotspotZone> findByZoneName(String zoneName);
-
-    List<HotspotZone> findBySeverityLevel(String level);
-
-    boolean existsByZoneName(String zoneName);
+    Optional<HotspotZone> findByZoneName(String name);
+    boolean existsByZoneName(String name);
+    List<HotspotZone> findBySeverityLevel(String severity);
 }

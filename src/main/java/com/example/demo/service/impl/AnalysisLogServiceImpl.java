@@ -14,29 +14,21 @@ import java.util.List;
 @Service
 public class AnalysisLogServiceImpl implements AnalysisLogService {
 
-    private final AnalysisLogRepository logRepository;
-    private final HotspotZoneRepository zoneRepository;
+    private final AnalysisLogRepository repo;
+    private final HotspotZoneRepository zoneRepo;
 
-    public AnalysisLogServiceImpl(AnalysisLogRepository logRepository,
-                                  HotspotZoneRepository zoneRepository) {
-        this.logRepository = logRepository;
-        this.zoneRepository = zoneRepository;
+    public AnalysisLogServiceImpl(AnalysisLogRepository r, HotspotZoneRepository z){
+        repo = r; zoneRepo = z;
     }
 
-    @Override
-    public AnalysisLog addLog(Long zoneId, String message) {
-        HotspotZone zone = zoneRepository.findById(zoneId)
-                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
-
-        AnalysisLog log = new AnalysisLog();
-        log.setMessage(message);
-        log.setZone(zone);
-
-        return logRepository.save(log);
+    public AnalysisLog addLog(Long zoneId, String msg) {
+        HotspotZone z = zoneRepo.findById(zoneId).orElseThrow();
+        AnalysisLog l = new AnalysisLog();
+        l.setZone(z); l.setMessage(msg);
+        return repo.save(l);
     }
 
-    @Override
-    public List<AnalysisLog> getLogsByZone(Long zoneId) {
-        return logRepository.findByZone_Id(zoneId);
+    public List<AnalysisLog> getLogsByZone(Long id) {
+        return repo.findByZone_Id(id);
     }
 }

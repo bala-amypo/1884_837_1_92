@@ -13,28 +13,19 @@ import java.util.List;
 @Service
 public class CrimeReportServiceImpl implements CrimeReportService {
 
-    private final CrimeReportRepository repository;
+    private final CrimeReportRepository repo;
 
-    public CrimeReportServiceImpl(CrimeReportRepository repository) {
-        this.repository = repository;
+    public CrimeReportServiceImpl(CrimeReportRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public CrimeReport addReport(CrimeReport report) {
-
-        if (!CoordinateValidator.isValid(report.getLatitude(), report.getLongitude())) {
-            throw new RuntimeException("Invalid latitude or longitude");
-        }
-
-        if (!DateValidator.isPastOrPresent(report.getOccurredAt())) {
-            throw new RuntimeException("Invalid date");
-        }
-
-        return repository.save(report);
+    public CrimeReport addReport(CrimeReport r) {
+        if (r.getLatitude() > 90 || r.getLatitude() < -90)
+            throw new RuntimeException("Invalid latitude");
+        return repo.save(r);
     }
 
-    @Override
     public List<CrimeReport> getAllReports() {
-        return repository.findAll();
+        return repo.findAll();
     }
 }
