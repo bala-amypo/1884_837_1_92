@@ -1,24 +1,40 @@
 package com.example.demo.config;
 
 import io.jsonwebtoken.*;
-import java.util.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
 public class JwtUtil {
 
-    private final String secret = "secret123";
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
 
-    public String generateToken(Long id, String email, String role) {
+    public String generateToken(Long userId, String email, String role) {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("email", email);
+        claims.put("role", role);
+
         return Jwts.builder()
-                .claim("userId", id)
-                .claim("email", email)
-                .claim("role", role)
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(key)
                 .compact();
     }
 
     public Claims parseToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
