@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.AnalysisLog;
-import com.example.demo.model.HotspotZone;
+import com.example.demo.entity.AnalysisLog;
+import com.example.demo.entity.HotspotZone;
 import com.example.demo.repository.AnalysisLogRepository;
 import com.example.demo.repository.HotspotZoneRepository;
 import com.example.demo.service.AnalysisLogService;
