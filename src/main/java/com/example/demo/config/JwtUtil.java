@@ -1,8 +1,11 @@
 package com.example.demo.config;
 
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 
+@Component  
 public class JwtUtil {
 
     private final String secret = "secretkeysecretkeysecretkey123";
@@ -19,7 +22,9 @@ public class JwtUtil {
     }
 
     public Claims parseToken(String token) {
-        return Jwts.parser().setSigningKey(secret)
-                .parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
