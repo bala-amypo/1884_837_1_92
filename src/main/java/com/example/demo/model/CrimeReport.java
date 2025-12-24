@@ -18,17 +18,16 @@ public class CrimeReport {
 
     public CrimeReport() {}
 
+    // getters & setters
     public Long getId() { return id; }
     public String getCrimeType() { return crimeType; }
-    public String getDescription() { return description; }
-    public Double getLatitude() { return latitude; }
-    public Double getLongitude() { return longitude; }
-    public LocalDateTime getOccurredAt() { return occurredAt; }
-
-    public void setId(Long id) { this.id = id; }
     public void setCrimeType(String crimeType) { this.crimeType = crimeType; }
+    public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public Double getLatitude() { return latitude; }
     public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public Double getLongitude() { return longitude; }
     public void setLongitude(Double longitude) { this.longitude = longitude; }
+    public LocalDateTime getOccurredAt() { return occurredAt; }
     public void setOccurredAt(LocalDateTime occurredAt) { this.occurredAt = occurredAt; }
 }

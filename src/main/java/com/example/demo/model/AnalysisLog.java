@@ -11,24 +11,27 @@ public class AnalysisLog {
     private Long id;
 
     private String message;
-    private LocalDateTime loggedAt;
+    private LocalDateTime loggedAt = LocalDateTime.now();
 
     @ManyToOne
     private HotspotZone zone;
 
-    @PrePersist
-    public void onLog() {
+    public AnalysisLog() {}
+
+    public AnalysisLog(String message, HotspotZone zone) {
+        this.message = message;
+        this.zone = zone;
         this.loggedAt = LocalDateTime.now();
     }
 
-    public AnalysisLog() {}
+    @PrePersist
+    public void prePersist() {
+        this.loggedAt = LocalDateTime.now();
+    }
 
-    public Long getId() { return id; }
     public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
     public LocalDateTime getLoggedAt() { return loggedAt; }
     public HotspotZone getZone() { return zone; }
-
-    public void setId(Long id) { this.id = id; }
-    public void setMessage(String message) { this.message = message; }
     public void setZone(HotspotZone zone) { this.zone = zone; }
 }
