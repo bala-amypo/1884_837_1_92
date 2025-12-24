@@ -3,38 +3,37 @@ package com.example.demo.service.impl;
 import com.example.demo.model.CrimeReport;
 import com.example.demo.repository.CrimeReportRepository;
 import com.example.demo.service.CrimeReportService;
-import com.example.demo.util.CoordinateValidator;
-import com.example.demo.util.DateValidator;
-
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class CrimeReportServiceImpl implements CrimeReportService {
 
-    private final CrimeReportRepository repository;
+    private final CrimeReportRepository reportRepository;
 
-    public CrimeReportServiceImpl(CrimeReportRepository repository) {
-        this.repository = repository;
+    public CrimeReportServiceImpl(CrimeReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     @Override
     public CrimeReport addReport(CrimeReport report) {
-
-        if (!CoordinateValidator.isValid(report.getLatitude(), report.getLongitude())) {
-            throw new RuntimeException("Invalid latitude or longitude");
+        if (report.getLatitude() < -90 || report.getLatitude() > 90) {
+            throw new IllegalArgumentException("latitude");
         }
-
-        if (!DateValidator.isPastOrPresent(report.getOccurredAt())) {
-            throw new RuntimeException("Invalid date");
+        if (report.getLongitude() < -180 || report.getLongitude() > 180) {
+            throw new IllegalArgumentException("longitude");
         }
-
-        return repository.save(report);
+        if (report.getOccurredAt() != null &&
+            report.getOccurredAt().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("time");
+        }
+        return reportRepository.save(report);
     }
 
     @Override
     public List<CrimeReport> getAllReports() {
-        return repository.findAll();
+        return reportRepository.findAll();
     }
 }

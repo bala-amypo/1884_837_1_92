@@ -3,8 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.model.HotspotZone;
 import com.example.demo.repository.HotspotZoneRepository;
 import com.example.demo.service.HotspotZoneService;
-import com.example.demo.util.CoordinateValidator;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,30 +10,28 @@ import java.util.List;
 @Service
 public class HotspotZoneServiceImpl implements HotspotZoneService {
 
-    private final HotspotZoneRepository repository;
+    private final HotspotZoneRepository zoneRepository;
 
-    public HotspotZoneServiceImpl(HotspotZoneRepository repository) {
-        this.repository = repository;
+    public HotspotZoneServiceImpl(HotspotZoneRepository zoneRepository) {
+        this.zoneRepository = zoneRepository;
     }
 
     @Override
     public HotspotZone addZone(HotspotZone zone) {
-
-        if (repository.existsByZoneName(zone.getZoneName())) {
-            throw new RuntimeException("Zone already exists");
+        if (zoneRepository.existsByZoneName(zone.getZoneName())) {
+            throw new IllegalArgumentException("exists");
         }
-
-        if (!CoordinateValidator.isValid(
-                zone.getCenterLat(), zone.getCenterLong())) {
-            throw new RuntimeException("Invalid latitude or longitude");
+        if (zone.getCenterLat() < -90 || zone.getCenterLat() > 90) {
+            throw new IllegalArgumentException("latitude");
         }
-
-        zone.setSeverityLevel("LOW");
-        return repository.save(zone);
+        if (zone.getCenterLong() < -180 || zone.getCenterLong() > 180) {
+            throw new IllegalArgumentException("longitude");
+        }
+        return zoneRepository.save(zone);
     }
 
     @Override
     public List<HotspotZone> getAllZones() {
-        return repository.findAll();
+        return zoneRepository.findAll();
     }
 }
