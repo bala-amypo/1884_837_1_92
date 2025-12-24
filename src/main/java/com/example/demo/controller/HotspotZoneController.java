@@ -2,10 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.HotspotZone;
 import com.example.demo.service.HotspotZoneService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +21,7 @@ public class HotspotZoneController {
 
     @PostMapping
     @Operation(summary = "Create hotspot zone")
-    public HotspotZone create(@RequestBody HotspotZone zone) {
+    public HotspotZone add(@RequestBody HotspotZone zone) {
         return service.addZone(zone);
     }
 

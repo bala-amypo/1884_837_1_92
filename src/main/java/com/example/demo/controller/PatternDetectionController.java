@@ -2,10 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.PatternDetectionResult;
 import com.example.demo.service.PatternDetectionService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +20,13 @@ public class PatternDetectionController {
     }
 
     @PostMapping("/detect/{zoneId}")
-    @Operation(summary = "Run pattern detection")
+    @Operation(summary = "Detect crime pattern")
     public PatternDetectionResult detect(@PathVariable Long zoneId) {
         return service.detectPattern(zoneId);
     }
 
     @GetMapping("/zone/{zoneId}")
-    @Operation(summary = "Get detection results by zone")
+    @Operation(summary = "Get pattern results for zone")
     public List<PatternDetectionResult> results(@PathVariable Long zoneId) {
         return service.getResultsByZone(zoneId);
     }

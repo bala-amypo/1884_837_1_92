@@ -1,17 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.JwtUtil;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,22 +24,24 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "Register new user")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        return new ResponseEntity<>(userService.register(user), HttpStatus.CREATED);
+    public User register(@RequestBody User user) {
+        return userService.register(user);
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login user")
-    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
-
-        User dbUser = userService.findByEmail(user.getEmail());
-
+    @Operation(summary = "Login and get JWT")
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        User user = userService.findByEmail(request.getEmail());
         String token = jwtUtil.generateToken(
-                dbUser.getId(),
-                dbUser.getEmail(),
-                dbUser.getRole()
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
         );
-
-        return ResponseEntity.ok(Map.of("token", token));
+        return new AuthResponse(
+                token,
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }
