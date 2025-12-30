@@ -20,7 +20,7 @@ public class SwaggerConfig {
 
                 // EXISTING SERVER CONFIG (UNCHANGED)
                 .servers(List.of(
-                        new Server().url("https://9211.408procr.amypo.ai/")
+                        new Server().url("https://9347.408procr.amypo.ai/")
                 ))
 
                 // ADD JWT SECURITY SCHEME
